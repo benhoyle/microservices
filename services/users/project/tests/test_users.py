@@ -9,6 +9,14 @@ from project import db
 from project.api.models import User
 
 
+def add_user(username, email):
+    """Add a user."""
+    user = User(username=username, email=email)
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+
 class TestUserService(BaseTestCase):
     """Tests for the Users Service."""
 
@@ -89,9 +97,7 @@ class TestUserService(BaseTestCase):
 
     def test_single_user(self):
         """Ensure get single user behaves correctly."""
-        user = User(username='ben', email='ben@ben.org')
-        db.session.add(user)
-        db.session.commit()
+        user = add_user('ben', 'ben@ben.org')
         with self.client:
             response = self.client.get(f'/users/{user.id}')
             data = json.loads(response.data.decode())
@@ -117,6 +123,22 @@ class TestUserService(BaseTestCase):
             self.assertEqual(response.status_code, 404)
             self.assertIn('User does not exist', data['message'])
             self.assertIn('fail', data['status'])
+
+    def test_all_users(self):
+        """Ensure get all users behaves correctly."""
+        add_user('ben', 'ben@ben.org')
+        add_user('jimbob', 'jim@bob.org.uk')
+        with self.client:
+            response = self.client.get('/users')
+            data = json.loads(response.data.decode())
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(len(data['data']['users']), 2)
+            self.assertIn('ben', data['data']['users'][0]['username'])
+            self.assertIn('jimbob', data['data']['users'][1]['username'])
+            self.assertIn('ben@ben.org', data['data']['users'][0]['email'])
+            self.assertIn('jim@bob.org.uk', data['data']['users'][1]['email'])
+            self.assertIn('success', data['status'])
+
 
 if __name__ == '__main__':
     unittest.main()
