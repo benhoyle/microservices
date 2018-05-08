@@ -5,6 +5,7 @@
 
 # testing
 /coverage
+__snapshot__
 
 # production
 /build
