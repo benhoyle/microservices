@@ -8,7 +8,7 @@ services:
       context: ./services/users
       dockerfile: Dockerfile-dev
     volumes:
-      - '/hosthome/ben/projects/testdriven-app/services/users:/usr/src/app'
+      - './services/users:/usr/src/app'
     ports:
       - 5001:5000
     environment:
