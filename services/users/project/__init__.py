@@ -4,6 +4,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_debugtoolbar import DebugToolbarExtension
+from flask_cors import CORS
 
 
 # instantiate the db
@@ -15,6 +16,9 @@ def create_app(script_info=None):
     """Create a new Flask app."""
     # instantiate the app
     app = Flask(__name__)
+
+    # enable CORS
+    CORS(app)
 
     # set configuration
     app_settings = os.getenv('APP_SETTINGS')
