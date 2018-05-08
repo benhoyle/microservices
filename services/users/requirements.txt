@@ -7,3 +7,6 @@ psycopg2==2.7.3.2
 
 # Testing
 Flask-Testing==0.6.2
+
+# Web Server
+gunicorn==19.7.1
