@@ -7,9 +7,10 @@ from project import create_app, db
 
 app = create_app()
 
+
 class BaseTestCase(TestCase):
     """Base Test Case."""
-    
+
     def create_app(self):
         """App creation for tests."""
         app.config.from_object('project.config.TestingConfig')

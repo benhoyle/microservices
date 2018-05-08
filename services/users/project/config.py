@@ -2,6 +2,7 @@
 # services/users/project/config.py
 import os
 
+
 class BaseConfig:
     """Base configuration."""
 
