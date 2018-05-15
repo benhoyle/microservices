@@ -58,7 +58,7 @@ class User(db.Model):
     def decode_auth_token(auth_token):
         """
         Decode an authentication token and return user ID.
-        
+
         :param auth_token: - :return: integer|string
         """
         try:
