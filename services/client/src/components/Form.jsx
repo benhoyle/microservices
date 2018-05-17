@@ -27,7 +27,7 @@ const Form = (props) => {
                     <input
                         name="email"
                         className="form-control input-lg"
-                        type="text"
+                        type="email"
                         placeholder="Enter an email address"
                         required
                         value={props.formData.email}
