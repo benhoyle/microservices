@@ -4,12 +4,28 @@
 import json
 import unittest
 
+from project import db
 from project.tests.base import BaseTestCase
 from project.tests.utils import add_user
+from project.api.models import User
 
 
 class TestUserService(BaseTestCase):
     """Tests for the Users Service."""
+
+    def get_token_header(self):
+        """Add user and login to get a token."""
+        add_user('admin', 'admin@admin.org', '123456')
+        resp_login = self.client.post(
+            '/auth/login',
+            data=json.dumps({
+                'email': 'admin@admin.org',
+                'password': '123456'
+            }),
+            content_type='application/json'
+        )
+        token = json.loads(resp_login.data.decode())['auth_token']
+        return {'Authorization': 'Bearer {token}'.format(token=token)}
 
     def test_users(self):
         """Ensure the /ping route behaves correctly."""
@@ -29,7 +45,8 @@ class TestUserService(BaseTestCase):
                     'email': 'ben@ben.org',
                     'password': '123456'
                 }),
-                content_type='application/json'
+                content_type='application/json',
+                headers=self.get_token_header()
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 201)
@@ -42,7 +59,8 @@ class TestUserService(BaseTestCase):
             response = self.client.post(
                 '/users',
                 data=json.dumps({}),
-                content_type='application/json'
+                content_type='application/json',
+                headers=self.get_token_header()
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
@@ -55,7 +73,8 @@ class TestUserService(BaseTestCase):
             response = self.client.post(
                 '/users',
                 data=json.dumps({'email': 'ben@ben.org'}),
-                content_type='application/json'
+                content_type='application/json',
+                headers=self.get_token_header()
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
@@ -64,6 +83,7 @@ class TestUserService(BaseTestCase):
 
     def test_add_user_duplicate_email(self):
         """Ensure error is thrown if the email already exists."""
+        headers = self.get_token_header()
         with self.client:
             response = self.client.post(
                 '/users',
@@ -72,7 +92,8 @@ class TestUserService(BaseTestCase):
                     'email': 'ben@ben.org',
                     'password': '123456'
                 }),
-                content_type='application/json'
+                content_type='application/json',
+                headers=headers
             )
             response = self.client.post(
                 '/users',
@@ -81,7 +102,8 @@ class TestUserService(BaseTestCase):
                     'email': 'ben@ben.org',
                     'password': '123456'
                 }),
-                content_type='application/json'
+                content_type='application/json',
+                headers=headers
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
@@ -93,7 +115,7 @@ class TestUserService(BaseTestCase):
         """Ensure get single user behaves correctly."""
         user = add_user('ben', 'ben@ben.org', '123456')
         with self.client:
-            response = self.client.get(f'/users/{user.id}')
+            response = self.client.get('/users/{}'.format(user.id))
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 200)
             self.assertIn('ben', data['data']['username'])
@@ -179,12 +201,35 @@ class TestUserService(BaseTestCase):
                     username='ben',
                     email='ben@test.org'
                 )),
-                content_type='application/json'
+                content_type='application/json',
+                headers=self.get_token_header()
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
             self.assertIn('Invalid payload.', data['message'])
             self.assertIn('fail', data['status'])
+
+    def test_add_user_inactive(self):
+        """Test an inactive user adding a user."""
+        headers = self.get_token_header()
+        user = User.query.filter_by(email='admin@admin.org').first()
+        user.active = False
+        db.session.commit()
+        with self.client:
+            response = self.client.post(
+                '/users',
+                data=json.dumps({
+                    'username': 'ben',
+                    'email': 'ben@ben.org',
+                    'password': '123456'
+                }),
+                content_type='application/json',
+                headers=headers
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'fail')
+            self.assertTrue(data['message'] == 'Provide a valid auth token.')
+            self.assertEqual(response.status_code, 401)
 
 
 if __name__ == '__main__':

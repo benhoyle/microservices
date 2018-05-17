@@ -4,12 +4,28 @@
 import json
 from flask import current_app
 
+from project import db
 from project.tests.base import BaseTestCase
 from project.tests.utils import add_user
+from project.api.models import User
 
 
 class TestAuthBlueprint(BaseTestCase):
     """Test authentication blueprint."""
+
+    def get_token_header(self):
+        """Add user and login to get a token."""
+        add_user('admin', 'admin@admin.org', '123456')
+        resp_login = self.client.post(
+            '/auth/login',
+            data=json.dumps({
+                'email': 'admin@admin.org',
+                'password': '123456'
+            }),
+            content_type='application/json'
+        )
+        token = json.loads(resp_login.data.decode())['auth_token']
+        return {'Authorization': 'Bearer {token}'.format(token=token)}
 
     def test_user_registration(self):
         """Test user registration."""
@@ -131,7 +147,8 @@ class TestAuthBlueprint(BaseTestCase):
                     username='ben',
                     email='ben@test.org'
                 )),
-                content_type='application/json'
+                content_type='application/json',
+                headers=self.get_token_header()
             )
             data = json.loads(response.data.decode())
             self.assertEqual(response.status_code, 400)
@@ -274,4 +291,56 @@ class TestAuthBlueprint(BaseTestCase):
             self.assertTrue(data['status'] == 'fail')
             self.assertTrue(
                 data['message'] == 'Invalid token. Please log in again.')
+            self.assertEqual(response.status_code, 401)
+
+    def test_invalid_logout_inactive(self):
+        """Test a logout with an inactive user."""
+        add_user('ben', 'ben@ben.org', '123456')
+        # Update user
+        user = User.query.filter_by(email='ben@ben.org').first()
+        user.active = False
+        db.session.commit()
+        with self.client:
+            resp_login = self.client.post(
+                '/auth/login',
+                data=json.dumps({
+                    'email': 'ben@ben.org',
+                    'password': '123456'
+                }),
+                content_type='application/json'
+            )
+            token = json.loads(resp_login.data.decode())['auth_token']
+            response = self.client.get(
+                '/auth/logout',
+                headers={'Authorization': 'Bearer {token}'.format(token=token)}
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'fail')
+            self.assertTrue(data['message'] == 'Provide a valid auth token.')
+            self.assertEqual(response.status_code, 401)
+
+    def test_invalid_status_inactive(self):
+        """Test accessing status if user is inactive."""
+        add_user('ben', 'ben@ben.org', '123456')
+        # Update user
+        user = User.query.filter_by(email='ben@ben.org').first()
+        user.active = False
+        db.session.commit()
+        with self.client:
+            resp_login = self.client.post(
+                '/auth/login',
+                data=json.dumps({
+                    'email': 'ben@ben.org',
+                    'password': '123456'
+                }),
+                content_type='application/json'
+            )
+            token = json.loads(resp_login.data.decode())['auth_token']
+            response = self.client.get(
+                '/auth/status',
+                headers={'Authorization': 'Bearer {token}'.format(token=token)}
+            )
+            data = json.loads(response.data.decode())
+            self.assertTrue(data['status'] == 'fail')
+            self.assertTrue(data['message'] == 'Provide a valid auth token.')
             self.assertEqual(response.status_code, 401)

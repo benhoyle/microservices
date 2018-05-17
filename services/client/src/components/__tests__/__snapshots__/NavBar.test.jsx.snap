@@ -70,19 +70,6 @@ exports[`NavBar renders a snapshot properly 1`] = `
             About
           </a>
         </li>
-        <li
-          className=""
-          role="presentation"
-          style={undefined}
-        >
-          <a
-            href="/status"
-            onClick={[Function]}
-            onKeyDown={[Function]}
-          >
-            Status
-          </a>
-        </li>
       </ul>
       <ul
         className="nav navbar-nav navbar-right"
@@ -112,19 +99,6 @@ exports[`NavBar renders a snapshot properly 1`] = `
             onKeyDown={[Function]}
           >
             Login
-          </a>
-        </li>
-        <li
-          className=""
-          role="presentation"
-          style={undefined}
-        >
-          <a
-            href="/logout"
-            onClick={[Function]}
-            onKeyDown={[Function]}
-          >
-            Logout
           </a>
         </li>
       </ul>
