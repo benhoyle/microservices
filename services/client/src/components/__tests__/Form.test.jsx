@@ -11,24 +11,26 @@ const testData = [
             username: '',
             email: '',
             password: ''
-        }
+        },
+        handleUserFormSubmit: jest.fn(),
+        handleFormChange: jest.fn(),
+        isAuthenticated: false,
     },
     {
         formType: 'Login',
         formData: {
             email: '',
             password: ''
-        }
+        },
+        handleUserFormSubmit: jest.fn(),
+        handleFormChange: jest.fn(),
+        isAuthenticated: false,
     }
 ];
 
 describe('When not authenticated', () => {
     testData.forEach((e1) => {
-        const component = <Form
-            formType={e1.formType}
-            formData={e1.formData}
-            isAuthenticated={false}
-        />;
+        const component = <Form {...e1} />;
         it('${e1.formType} Form renders properly', () => {
             const wrapper = shallow(component);
             const h1 = wrapper.find('h1');
@@ -39,6 +41,18 @@ describe('When not authenticated', () => {
             expect(formGroup.get(0).props.children.props.name).toBe(Object.keys(e1.formData)[0]);
             expect(formGroup.get(0).props.children.props.value).toBe('');
         });
+        it(`${e1.formType} Form submits the form properly`, () => {
+            const wrapper = shallow(component);
+            const input = wrapper.find('input[type="email"]');
+            expect(e1.handleUserFormSubmit).toHaveBeenCalledTimes(0);
+            expect(e1.handleFormChange).toHaveBeenCalledTimes(0);
+            input.simulate('change')
+            expect(e1.handleFormChange).toHaveBeenCalledTimes(1);
+            wrapper.find('form').simulate('submit', e1.formData)
+            expect(e1.handleUserFormSubmit).toHaveBeenCalledWith(
+                e1.formData);
+            expect(e1.handleUserFormSubmit).toHaveBeenCalledTimes(1);
+        }); 
         it('${e1.formType} Form renders a snapshot properly', () => {
             const tree = renderer.create(component).toJSON();
             expect(tree).toMatchSnapshot();
@@ -59,32 +73,4 @@ describe('When authenticated', () => {
             expect(wrapper.find('Redirect')).toHaveLength(1);
         });
     });
-});
-
-
-describe('When not authenticated', () => {
-    const testValues = {
-        formType: 'Register',
-        formData: {
-            username: '',
-            email: '',
-            password: ''
-        },
-        handleUserFormSubmit: jest.fn(),
-        handleFormChange: jest.fn(),
-        isAuthenticated: false,
-    };
-    const component = <Form {...testValues} />;
-    it(`${testValues.formType} Form submits the form properly`, () => {
-        const wrapper = shallow(component);
-        const input = wrapper.find('input[type="email"]');
-        expect(testValues.handleUserFormSubmit).toHaveBeenCalledTimes(0);
-        expect(testValues.handleFormChange).toHaveBeenCalledTimes(0);
-        input.simulate('change')
-        expect(testValues.handleFormChange).toHaveBeenCalledTimes(1);
-        wrapper.find('form').simulate('submit', testValues.formData)
-        expect(testValues.handleUserFormSubmit).toHaveBeenCalledWith(
-            testValues.formData);
-        expect(testValues.handleUserFormSubmit).toHaveBeenCalledTimes(1);
-    }); 
 });

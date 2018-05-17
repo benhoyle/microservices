@@ -16,7 +16,7 @@ exports[`When not authenticated \${e1.formType} Form renders a snapshot properly
       <input
         className="form-control input-lg"
         name="username"
-        onChange={undefined}
+        onChange={[Function]}
         placeholder="Enter a username"
         required={true}
         type="text"
@@ -29,10 +29,10 @@ exports[`When not authenticated \${e1.formType} Form renders a snapshot properly
       <input
         className="form-control input-lg"
         name="email"
-        onChange={undefined}
+        onChange={[Function]}
         placeholder="Enter an email address"
         required={true}
-        type="text"
+        type="email"
         value=""
       />
     </div>
@@ -42,7 +42,7 @@ exports[`When not authenticated \${e1.formType} Form renders a snapshot properly
       <input
         className="form-control input-lg"
         name="password"
-        onChange={undefined}
+        onChange={[Function]}
         placeholder="Enter a password"
         required={true}
         type="password"
@@ -74,10 +74,10 @@ exports[`When not authenticated \${e1.formType} Form renders a snapshot properly
       <input
         className="form-control input-lg"
         name="email"
-        onChange={undefined}
+        onChange={[Function]}
         placeholder="Enter an email address"
         required={true}
-        type="text"
+        type="email"
         value=""
       />
     </div>
@@ -87,7 +87,7 @@ exports[`When not authenticated \${e1.formType} Form renders a snapshot properly
       <input
         className="form-control input-lg"
         name="password"
-        onChange={undefined}
+        onChange={[Function]}
         placeholder="Enter a password"
         required={true}
         type="password"
