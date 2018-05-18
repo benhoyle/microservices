@@ -13,9 +13,12 @@ from project.api.models import User
 class TestUserService(BaseTestCase):
     """Tests for the Users Service."""
 
-    def get_token_header(self):
+    def get_token_header(self, admin=True):
         """Add user and login to get a token."""
-        add_user('admin', 'admin@admin.org', '123456')
+        user = add_user('admin', 'admin@admin.org', '123456')
+        if admin:
+            user.admin = True
+            db.session.commit()
         resp_login = self.client.post(
             '/auth/login',
             data=json.dumps({
@@ -153,6 +156,8 @@ class TestUserService(BaseTestCase):
             self.assertIn('jimbob', data['data']['users'][1]['username'])
             self.assertIn('ben@ben.org', data['data']['users'][0]['email'])
             self.assertIn('jim@bob.org.uk', data['data']['users'][1]['email'])
+            self.assertFalse(data['data']['users'][0]['admin'])
+            self.assertFalse(data['data']['users'][1]['admin'])
             self.assertIn('success', data['status'])
 
     def test_main_no_users(self):
@@ -230,6 +235,25 @@ class TestUserService(BaseTestCase):
             self.assertTrue(data['status'] == 'fail')
             self.assertTrue(data['message'] == 'Provide a valid auth token.')
             self.assertEqual(response.status_code, 401)
+
+    def test_add_user_not_admin(self):
+        """Test adding of a user if not an administrator."""
+        with self.client:
+            response = self.client.post(
+                '/users',
+                data=json.dumps({
+                    'username': 'ben',
+                    'email': 'ben@ben.org',
+                    'password': '123456'
+                }),
+                content_type='application/json',
+                headers=self.get_token_header(admin=False)
+            )
+        data = json.loads(response.data.decode())
+        self.assertTrue(data['status'] == 'fail')
+        self.assertTrue(
+            data['message'] == 'You do not have permission to do that.')
+        self.assertEqual(response.status_code, 401)
 
 
 if __name__ == '__main__':

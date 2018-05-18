@@ -29,3 +29,9 @@ def authenticate(f):
             return jsonify(response_object), 401
         return f(resp, *args, **kwargs)
     return decorated_function
+
+
+def is_admin(user_id):
+    """Determine if a user is an administrator."""
+    user = User.query.filter_by(id=user_id).first()
+    return user.admin

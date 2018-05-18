@@ -13,9 +13,12 @@ from project.api.models import User
 class TestAuthBlueprint(BaseTestCase):
     """Test authentication blueprint."""
 
-    def get_token_header(self):
+    def get_token_header(self, admin=True):
         """Add user and login to get a token."""
-        add_user('admin', 'admin@admin.org', '123456')
+        user = add_user('admin', 'admin@admin.org', '123456')
+        if admin:
+            user.admin = True
+            db.session.commit()
         resp_login = self.client.post(
             '/auth/login',
             data=json.dumps({
@@ -278,6 +281,7 @@ class TestAuthBlueprint(BaseTestCase):
             self.assertTrue(data['data']['username'] == 'ben')
             self.assertTrue(data['data']['email'] == 'ben@ben.org')
             self.assertTrue(data['data']['active'])
+            self.assertFalse(data['data']['admin'])
             self.assertEqual(response.status_code, 200)
 
     def test_invalid_status(self):
