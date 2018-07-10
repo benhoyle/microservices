@@ -70,7 +70,47 @@ class Form extends Component {
         .catch((err) => { console.log(err); });
     };
     validateForm() {
+        // define self as this
+        const self = this;
+        // get form data
+        const formData = this.state.formData;
+        // reset all rules
+        self.resetRules()
+        // validate register form
+        if (self.props.formType === 'register') {
+            const formRules = self.state.registerFormRules;
+            if (formData.password.length > 10) formRules[3].valid = true;
+            self.setState({registerFormRules: formRules});
+            if (self.allTrue()) self.setState({valid: true});
+        };
         this.setState({ valid: true });
+    };
+    allTrue() {
+        let formRules = this.state.loginFormRules;
+        if (this.props.formType === 'register') {
+            formRules = this.state.registerFormRules;
+        };
+        for (const rule of formRules) {
+            if (!rule.valid) return false;
+        };
+        return true;
+    };
+    resetRules() {
+        if (this.props.formType === 'login') {
+            const formRules = this.state.loginFormRules;
+            for (const rule of formRules) {
+                rule.valid = false;
+            };
+            this.setState({loginFormRules: formRules});
+        };
+        if (this.props.formType === 'register') {
+            const formRules = this.state.registerFormRules;
+            for (const rule of formRules) {
+                rule.valid = false;
+            };
+            this.setState({registerFormRules: formRules});
+        };
+        this.setState({valid: false});
     };
     render () {
         if (this.props.isAuthenticated) {
