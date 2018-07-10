@@ -26,6 +26,7 @@ class Form extends Component {
     componentWillReceiveProps(nextProps) {
         if (this.props.formType !== nextProps.formType) {
             this.clearForm();
+            this.resetRules();
         };
     };
     clearForm() {
@@ -75,15 +76,24 @@ class Form extends Component {
         // get form data
         const formData = this.state.formData;
         // reset all rules
-        self.resetRules()
+        self.resetRules();
         // validate register form
         if (self.props.formType === 'register') {
             const formRules = self.state.registerFormRules;
+            if (formData.username.length > 5) formRules[0].valid = true;
+            if (formData.email.length > 5) formRules[1].valid = true;
+            if (this.validateEmail(formData.email)) formRules[2].valid = true;
             if (formData.password.length > 10) formRules[3].valid = true;
             self.setState({registerFormRules: formRules});
             if (self.allTrue()) self.setState({valid: true});
         };
-        this.setState({ valid: true });
+        if (self.props.formType === 'login') {
+            const formRules = self.state.loginFormRules;
+            if (formData.email.length > 0) formRules[0].valid = true;
+            if (formData.password.length > 0) formRules[1].valid = true;
+            self.setState({registerFormRules: formRules});
+            if (self.allTrue()) self.setState({valid: true});
+        };
     };
     allTrue() {
         let formRules = this.state.loginFormRules;
@@ -94,6 +104,10 @@ class Form extends Component {
             if (!rule.valid) return false;
         };
         return true;
+    };
+    validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
     };
     resetRules() {
         if (this.props.formType === 'login') {

@@ -6,6 +6,7 @@ const username = randomstring.generate();
 const email = `${username}@test.com`;
 
 const TEST_URL = process.env.TEST_URL;
+const password = 'greaterthanten';
 
 fixture('/login').page(`${TEST_URL}/login`);
 
@@ -27,7 +28,7 @@ test(`should allow a user to sign in`, async (t) => {
         .navigateTo(`${TEST_URL}/register`)
         .typeText('input[name="username"]', username)
         .typeText('input[name="email"]', email)
-        .typeText('input[name="password"]', 'test')
+        .typeText('input[name="password"]', password)
         .click(Selector('input[type="submit"]'))
 
     // log a user out
@@ -38,7 +39,7 @@ test(`should allow a user to sign in`, async (t) => {
     await t
         .navigateTo(`${TEST_URL}/login`)
         .typeText('input[name="email"]', email)
-        .typeText('input[name="password"]', 'test')
+        .typeText('input[name="password"]', password)
         .click(Selector('input[type="submit"]'))
 
     // assert user is redirected to '/'
