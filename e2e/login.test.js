@@ -14,6 +14,10 @@ test(`should display the login form`, async (t) => {
         .navigateTo(`${TEST_URL}/login`)
         .expect(Selector('H1').withText('Login').exists).ok()
         .expect(Selector('form').exists).ok()
+        .expect(Selector('input[disabled]').exists).ok()
+        .expect(Selector('.validation-list').exists).ok()
+        .expect(Selector('.validation-list > .error').nth(0).withText(
+            'Email is required.').exists).ok()
 });
 
 test(`should allow a user to sign in`, async (t) => {

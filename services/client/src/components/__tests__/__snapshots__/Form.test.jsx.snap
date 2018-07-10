@@ -1,12 +1,112 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`When not authenticated \${e1.formType} Form renders a snapshot properly 1`] = `
+exports[`When not authenticated login Form renders a snapshot properly 1`] = `
 <div>
-  <h1>
+  <h1
+    style={
+      Object {
+        "textTransform": "capitalize",
+      }
+    }
+  >
+    login
+  </h1>
+  <hr />
+  <br />
+  <div>
+    <ul
+      className="validation-list"
+    >
+      <li
+        className="error"
+      >
+        Email is required.
+      </li>
+      <li
+        className="error"
+      >
+        Password is required.
+      </li>
+    </ul>
+  </div>
+  <form
+    onSubmit={[Function]}
+  >
+    <div
+      className="form-group"
+    >
+      <input
+        className="form-control input-lg"
+        name="email"
+        onChange={[Function]}
+        placeholder="Enter an email address"
+        required={true}
+        type="email"
+        value=""
+      />
+    </div>
+    <div
+      className="form-group"
+    >
+      <input
+        className="form-control input-lg"
+        name="password"
+        onChange={[Function]}
+        placeholder="Enter a password"
+        required={true}
+        type="password"
+        value=""
+      />
+    </div>
+    <input
+      className="btn btn-primary btn-lg btn-block"
+      disabled={true}
+      type="submit"
+      value="Submit"
+    />
+  </form>
+</div>
+`;
+
+exports[`When not authenticated register Form renders a snapshot properly 1`] = `
+<div>
+  <h1
+    style={
+      Object {
+        "textTransform": "capitalize",
+      }
+    }
+  >
     register
   </h1>
   <hr />
   <br />
+  <div>
+    <ul
+      className="validation-list"
+    >
+      <li
+        className="error"
+      >
+        Username must be greater than 5 characters.
+      </li>
+      <li
+        className="error"
+      >
+        Email must be greater than 5 characters.
+      </li>
+      <li
+        className="error"
+      >
+        Email must be a valid email address.
+      </li>
+      <li
+        className="error"
+      >
+        Password must be greater than 10 characters.
+      </li>
+    </ul>
+  </div>
   <form
     onSubmit={[Function]}
   >
@@ -51,51 +151,7 @@ exports[`When not authenticated \${e1.formType} Form renders a snapshot properly
     </div>
     <input
       className="btn btn-primary btn-lg btn-block"
-      type="submit"
-      value="Submit"
-    />
-  </form>
-</div>
-`;
-
-exports[`When not authenticated \${e1.formType} Form renders a snapshot properly 2`] = `
-<div>
-  <h1>
-    login
-  </h1>
-  <hr />
-  <br />
-  <form
-    onSubmit={[Function]}
-  >
-    <div
-      className="form-group"
-    >
-      <input
-        className="form-control input-lg"
-        name="email"
-        onChange={[Function]}
-        placeholder="Enter an email address"
-        required={true}
-        type="email"
-        value=""
-      />
-    </div>
-    <div
-      className="form-group"
-    >
-      <input
-        className="form-control input-lg"
-        name="password"
-        onChange={[Function]}
-        placeholder="Enter a password"
-        required={true}
-        type="password"
-        value=""
-      />
-    </div>
-    <input
-      className="btn btn-primary btn-lg btn-block"
+      disabled={true}
       type="submit"
       value="Submit"
     />
