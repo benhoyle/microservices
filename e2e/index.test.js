@@ -12,6 +12,7 @@ test(`should display the page correctly if a user is not logged in`, async (t) =
         .expect(Selector('a').withText('Logout').exists).notOk()
         .expect(Selector('a').withText('Register').exists).ok()
         .expect(Selector('a').withText('Login').exists).ok()
+        .expect(Selector('.alert').exists).notOk()
 });
 
 test(`users should see the login form on the '/login' page`, async (t) => {

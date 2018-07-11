@@ -54,6 +54,7 @@ test(`should allow a user to sign in`, async (t) => {
         .expect(Selector('a').withText('Register').exists).notOk()
         .expect(Selector('a').withText('Login').exists).notOk()
 
+
     // log a user out
     await t
         .click(Selector('a').withText('Logout'))
@@ -66,4 +67,43 @@ test(`should allow a user to sign in`, async (t) => {
         .expect(Selector('a').withText('Register').exists).ok()
         .expect(Selector('a').withText('Login').exists).ok()
 
+});
+
+test(`should throw an error if the credentials are incorrect`, async (t) => {
+
+    // attempt to login
+    await t
+        .navigateTo(`${TEST_URL}/login`)
+        .typeText('input[name="email"]', 'incorrect@email.com')
+        .typeText('input[name="password"]', password)
+        .click(Selector('input[type="submit"]'))
+
+    // assert user login fails
+    await t
+        .expect(Selector('H1').withText('Login').exists).ok()
+        .expect(Selector('a').withText('Status').exists).notOk()
+        .expect(Selector('a').withText('Logout').exists).notOk()
+        .expect(Selector('a').withText('Register').exists).ok()
+        .expect(Selector('a').withText('Login').exists).ok()
+        .expect(Selector('.alert-success').exists).notOk()
+        .expect(Selector('.alert-danger').withText(
+            'Login failed.').exists).ok()
+
+    // attempt to login
+    await t
+        .navigateTo(`${TEST_URL}/login`)
+        .typeText('input[name="email"]', email)
+        .typeText('input[name="password"]', 'incorrectpassword')
+        .click(Selector('input[type="submit"]'))
+
+    // assert user login fails
+    await t
+        .expect(Selector('H1').withText('Login').exists).ok()
+        .expect(Selector('a').withText('Status').exists).notOk()
+        .expect(Selector('a').withText('Logout').exists).notOk()
+        .expect(Selector('a').withText('Register').exists).ok()
+        .expect(Selector('a').withText('Login').exists).ok()
+        .expect(Selector('.alert-success').exists).notOk()
+        .expect(Selector('.alert-danger').withText(
+            'Login failed.').exists).ok()
 });
