@@ -43,7 +43,7 @@ def register_user():
                 'message': 'Successfully registered.',
                 'auth_token': auth_token.decode()
             }
-            return jsonify(response_object), 201
+            return jsonify(response_object), 200
         else:
             response_object['message'] = 'Sorry. That user already exists.'
             return jsonify(response_object), 400
